@@ -106,7 +106,7 @@ function ganadores(apuesta, numero) {
 
 function siguiente() {
     let indice = tipoConcurso.indexOf(tipoConcurso.find(concurso => concurso.nombre === registroSorteos[registroSorteos.length-1].tipo))
-    if (indice+1<3) {
+    if (indice+1<=3) {
         return tipoConcurso[indice+1]
     } else {
         return tipoConcurso[0]
@@ -126,15 +126,15 @@ function abrir() {
                     try {
                         quini()
                         ganadores(opciones[valor], num)
-                        console.log(`sigueinte concurso: ${siguiente()}`)
-                        console.log('cerrando la interface');
+                        console.log(`sigueinte concurso: ${siguiente().nombre} fecha:${siguiente().horario}`)
                     } catch (err) {
                         let tiempo = siguiente().horario.split(':')
                         tiempo = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), tiempo[0], tiempo[1], 0)
-                        console.log(`tiempo restante hasta el siguiente concurso: ${new Date(tiempo-new Date()).getHours()-19}:${new Date(tiempo-new Date()).getMinutes()}:${new Date(tiempo-new Date()).getSeconds()}`)
+                        console.log(`tiempo restante hasta el siguiente concurso: ${new Date(tiempo-new Date()).getHours()-19}:${new Date(tiempo-new Date()).getMinutes()}:${new Date(tiempo-new Date()).getSeconds()}`)                       
                     }
                 },1000)
                 interface.close()
+                console.log('cerrando interface')
             })
         } else {
             abrir()
