@@ -4,7 +4,7 @@ let registroSorteos = JSON.parse(fs.readFileSync('concursos.json'))
 
 class sorteo {
     constructor() {
-        this.fecha = new Date(2021, 9, 10, 21, 0)
+        this.fecha = new Date()
         this.tipo = this.tipo(this.fecha).nombre
         this.numerosGanadores = null
     }
@@ -46,6 +46,11 @@ const tipoConcurso = [
         horario: '21:0'
     }
 ]
+// let hora
+// hora = new Date(2021, 9, 10, 12, 0)
+// hora = new Date(2021, 9, 10, 15, 0)
+// hora = new Date(2021, 9, 10, 17, 30)
+// hora = new Date(2021, 9, 10, 21, 0)
 
 const interface = readline.createInterface(process.stdin,process.stdout)
 const opciones = ['a la cabeza', 'a los diez', 'a los 20']
@@ -59,6 +64,7 @@ function quini() {
     console.log('numeros ganadores');
     console.table(evento.numerosGanadores);
     registroSorteos.push(evento)
+    fs.writeFileSync('concursos.json',JSON.stringify(registroSorteos))
 }
 
 function ganadores(apuesta, numero) {
@@ -98,6 +104,15 @@ function ganadores(apuesta, numero) {
     }
 }
 
+function siguiente() {
+    let indice = tipoConcurso.indexOf(tipoConcurso.find(concurso => concurso.nombre === registroSorteos[registroSorteos.length-1].tipo))
+    if (indice+1<3) {
+        return tipoConcurso[indice+1]
+    } else {
+        return tipoConcurso[0]
+    }
+}
+
 function abrir() {
     interface.question(`A que juegas:\n${printOpciones}`, valor => {
 
@@ -106,14 +121,18 @@ function abrir() {
             interface.question('selecciona un numero\n', num => {
                 
                 console.log(`seleccionaste el numero ${num} ${opciones[valor]}`)
-                try {
-                    console.log('\niniciando Quiniela\n'.toUpperCase())
-                    quini()
-                    ganadores(opciones[valor], num)
-                    console.log('cerrando la interface');
-                } catch (error) {
-                    console.error(error)
-                }
+                setInterval( ()=> {
+                    try {
+                        console.log('\niniciando Quiniela\n'.toUpperCase())
+                        quini()
+                        ganadores(opciones[valor], num)
+                        console.log('cerrando la interface');
+                    } catch (err) {
+                        let tiempo = siguiente().horario
+                        let hora = `${new Date().getHours()}:${new Date().getMinutes()}`
+                        console.log(`tiempo restante hasta el siguiente concurso: ${tiempo} ${hora}`)
+                    }
+                },1000)
                 interface.close()
             })
         } else {
@@ -122,23 +141,10 @@ function abrir() {
     })
 }
 
+
+function mostraRegistros() {
+    console.log('mostrando lista de sorteos hasta la fecha\n');
+    console.table(registroSorteos);
+}
+
 abrir()
-
-
-// let hora
-// hora = new Date(2021, 9, 10, 12, 0)
-// hora = new Date(2021, 9, 10, 15, 0)
-// hora = new Date(2021, 9, 10, 17, 30)
-// hora = new Date(2021, 9, 10, 21, 0)
-
-// setInterval( ()=> {
-//     try {
-//         console.log('iniciando nueva quiniela!\n');
-//         quini()
-//         console.log('mostrando lista de sorteos hasta la fecha\n');
-//         console.table(registroSorteos);
-//         fs.writeFileSync('concursos.json',JSON.stringify(registroSorteos))
-//     } catch (error) {
-//         console.error(error)
-//     }
-// }, 10000)
