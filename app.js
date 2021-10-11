@@ -14,7 +14,7 @@ class sorteo {
     }
 
     tipo(hora) {
-        return tipoConcurso.find(tipo => tipo.horario === `${hora.getHours()}:${hora.getMinutes()}`)
+        return tipoConcurso.find(tipo => tipo.horario === `${hora.getHours()}:${hora.getMinutes()}:${hora.getSeconds()}`)
     }
 
 }
@@ -31,19 +31,19 @@ class numerosGanadores {
 const tipoConcurso = [
     {
         nombre: 'Primera',
-        horario: '12:0'
+        horario: '12:0:0'
     },
     {
         nombre: 'Matutina',
-        horario: '15:0'
+        horario: '15:0:0'
     },
     {
         nombre: 'Vespertina',
-        horario: '17:30'
+        horario: '17:30:0'
     },
     {
         nombre: 'Nocturna',
-        horario: '21:0'
+        horario: '21:0:0'
     }
 ]
 // let hora
@@ -121,16 +121,17 @@ function abrir() {
             interface.question('selecciona un numero\n', num => {
                 
                 console.log(`seleccionaste el numero ${num} ${opciones[valor]}`)
+                console.log('\niniciando Quiniela\n'.toUpperCase())
                 setInterval( ()=> {
                     try {
-                        console.log('\niniciando Quiniela\n'.toUpperCase())
                         quini()
                         ganadores(opciones[valor], num)
+                        console.log(`sigueinte concurso: ${siguiente()}`)
                         console.log('cerrando la interface');
                     } catch (err) {
-                        let tiempo = siguiente().horario
-                        let hora = `${new Date().getHours()}:${new Date().getMinutes()}`
-                        console.log(`tiempo restante hasta el siguiente concurso: ${tiempo} ${hora}`)
+                        let tiempo = siguiente().horario.split(':')
+                        tiempo = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), tiempo[0], tiempo[1], 0)
+                        console.log(`tiempo restante hasta el siguiente concurso: ${new Date(tiempo-new Date()).getHours()-19}:${new Date(tiempo-new Date()).getMinutes()}:${new Date(tiempo-new Date()).getSeconds()}`)
                     }
                 },1000)
                 interface.close()
